@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Alert, Image, ActivityIndicator } from 'react-native';
 import { EyeIcon, EyeOffIcon } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
 import RNPickerSelect from 'react-native-picker-select';
@@ -15,6 +15,7 @@ export default function Component() {
   const [mobileNumber, setMobileNumber] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigation = useNavigation();
 
@@ -29,6 +30,7 @@ export default function Component() {
       return;
     }
 
+    setIsLoading(true);
     try {
       const response = await axios.post('https://annadaata-backend.onrender.com/api/users/register', {
         accountType,
@@ -38,35 +40,29 @@ export default function Component() {
         password,
         termsAccepted,
       });
-      // Handle successful response
       Alert.alert('Success', 'Account created successfully.');
-      navigation.navigate('Login'); // Navigate to the login screen
+      navigation.navigate('Login');
     } catch (error) {
-      // Handle error response
       if (error.response) {
-        // The request was made and the server responded with a status code
-        // that falls out of the range of 2xx
         Alert.alert('Error', error.response.data.message || 'Something went wrong.');
       } else if (error.request) {
-        // The request was made but no response was received
         Alert.alert('Error', 'Network error. Please try again.');
       } else {
-        // Something happened in setting up the request that triggered an Error
         Alert.alert('Error', 'An unexpected error occurred.');
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <View style={styles.container}>
-      {/* Header */}
       <View style={styles.header}>
         <View style={styles.logoContainer}>
           <Text style={styles.logoText}>Annadaata</Text>
         </View>
       </View>
 
-      {/* Main Content inside ScrollView */}
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <Text style={styles.title}>Create Account</Text>
         <Text style={styles.subTitle}>Please create your account</Text>
@@ -86,28 +82,28 @@ export default function Component() {
           </View>
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Full Name</Text>
-            <TextInput 
-              style={styles.input} 
-              placeholder="Full Name" 
+            <TextInput
+              style={styles.input}
+              placeholder="Full Name"
               value={fullName}
               onChangeText={setFullName}
             />
           </View>
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Email Address</Text>
-            <TextInput 
-              style={styles.input} 
-              placeholder="Email Address" 
+            <TextInput
+              style={styles.input}
+              placeholder="Email Address"
               keyboardType="email-address"
               value={emailAddress}
-              onChangeText={setEmailAddress}
+              onChangeText={(text) => setEmailAddress(text.toLowerCase())}  // Convert to lowercase
             />
           </View>
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Mobile Number</Text>
-            <TextInput 
-              style={styles.input} 
-              placeholder="Mobile Number" 
+            <TextInput
+              style={styles.input}
+              placeholder="Mobile Number"
               keyboardType="phone-pad"
               value={mobileNumber}
               onChangeText={setMobileNumber}
@@ -150,22 +146,29 @@ export default function Component() {
             <View style={[styles.checkbox, termsAccepted && styles.checkboxChecked]} />
             <Text style={styles.checkboxLabel}>I agree to the terms & conditions</Text>
           </TouchableOpacity>
+
           <TouchableOpacity style={styles.button} onPress={handleRegister}>
             <Text style={styles.buttonText}>Create Account</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
 
-      {/* Footer */}
       <View style={styles.footer}>
         <Text style={styles.footerText}>
           Already have an account?{' '}
           <Text onPress={() => navigation.navigate('Login')} style={styles.footerLink}>Login</Text>
         </Text>
       </View>
+
+      {isLoading && (
+        <View style={styles.loadingContainer}>
+          <Image source={require('../assets/loading.gif')} style={styles.loadingGif} />
+        </View>
+      )}
     </View>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -270,6 +273,21 @@ const styles = StyleSheet.create({
   footerLink: {
     color: '#4CAF50',
     fontWeight: 'bold',
+  },
+  loadingContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 10,
+  },
+  loadingGif: {
+    width: 100,
+    height: 100,
   },
 });
 
