@@ -1,69 +1,90 @@
-import React from "react";
-import { View, Text, Image, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
-import { ArrowLeft, Heart, ShoppingCart, Minus, Plus, Star } from "lucide-react-native";
+import React from 'react';
+import { View, Text, Image, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+import { ArrowLeft } from 'lucide-react-native';
+import { useRoute } from '@react-navigation/native';
+import { Linking, Alert } from 'react-native';
+
+// Simplified function for handling phone calls
+const handleCall = (phoneNumber) => {
+  if (!phoneNumber) {
+    Alert.alert('No phone number provided');
+    return;
+  }
+
+  const url = `tel:${phoneNumber}`;
+
+  Linking.canOpenURL(url)
+    .then(supported => {
+      if (!supported) {
+        Alert.alert('Phone call not supported');
+      } else {
+        return Linking.openURL(url);
+      }
+    })
+    .catch(err => console.error('Error opening phone call:', err));
+};
 
 export default function VegetableProductDetails() {
+  const route = useRoute();
+  const { product } = route.params;
+
+  if (!product) {
+    return <Text>No product data available</Text>;
+  }
+
+  // Function to handle WhatsApp
+  const handleWhatsapp = () => {
+    const url = `whatsapp://send?phone=${product.farmer.whatsapp}`;
+    Linking.canOpenURL(url)
+      .then((supported) => {
+        if (supported) {
+          return Linking.openURL(url);
+        } else {
+          console.log('WhatsApp not installed');
+        }
+      })
+      .catch((err) => console.error('Error opening WhatsApp:', err));
+  };
+
   return (
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-      <View style={styles.navfix}>
-        <TouchableOpacity style={styles.headerButton}>
-          <ArrowLeft width={24} height={24} color="white" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Product Details</Text>
-        <TouchableOpacity style={styles.headerButton}>
-          <ShoppingCart width={24} height={24} color="white" />
-          <View style={styles.badge}>
-            <Text style={styles.badgeText}>2</Text>
-          </View>
-        </TouchableOpacity>
-      </View>
+        <View style={styles.navfix}>
+          <TouchableOpacity style={styles.headerButton}>
+            <ArrowLeft width={24} height={24} color="white" />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Product Details</Text>
+          <TouchableOpacity style={styles.headerButton}>
+            {/* <ShoppingCart width={24} height={24} color="white" /> */}
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* Main content */}
       <ScrollView style={styles.main}>
         <View style={styles.productContainer}>
           <Image
-            source={{ uri: "/placeholder.svg?height=200&width=300" }}
+            source={{ uri: product.imageUrls ? `https://drive.google.com/uc?export=view&id=${product.imageUrls[0]}` : 'https://via.placeholder.com/300x200' }}
             style={styles.productImage}
           />
           <View style={styles.productInfo}>
-            <Text style={styles.productTitle}>Fresh Broccoli</Text>
-            <TouchableOpacity>
-              <Heart width={24} height={24} color="#34D399" />
-            </TouchableOpacity>
+            <Text style={styles.productTitle}>{product.name}</Text>
           </View>
-          <Text style={styles.productWeight}>500 gm</Text>
-          <View style={styles.priceContainer}>
-            <Text style={styles.price}>$2.99</Text>
-            <View style={styles.badgeAvailable}>
-              <Text style={styles.badgeAvailableText}>Available on fast delivery</Text>
-            </View>
-          </View>
-          <View style={styles.ratingContainer}>
-            {[...Array(4)].map((_, index) => (
-              <Star key={index} width={20} height={20} color="#FBBF24" fill="#FBBF24" />
-            ))}
-            <Star width={20} height={20} color="#D1D5DB" />
-            <Text style={styles.ratingText}>4.2 Rating</Text>
-          </View>
+
           <Text style={styles.guaranteeText}>
-            100% satisfaction guarantee. If you experience any issues with freshness, quality, or delivery, we'll make it right.
-            <Text style={styles.readMoreText}> Read more</Text>
+            Estimate price Rs. {product.price} per/kg{'\n'}
+            {product.farmer.fullName}{'\n'}
+            {product.farmer.address}{'\n'}
+            {product.farmer.mobileNumber}{'\n'}
           </Text>
+
           <View style={styles.quantityContainer}>
-            <View style={styles.quantityControls}>
-              <TouchableOpacity>
-                <Minus width={24} height={24} color="#34D399" />
-              </TouchableOpacity>
-              <Text style={styles.quantityText}>1</Text>
-              <TouchableOpacity>
-                <Plus width={24} height={24} color="#34D399" />
-              </TouchableOpacity>
-            </View>
-            <TouchableOpacity style={styles.addToCartButton}>
-              <Text style={styles.addToCartText}>Add to cart</Text>
+            <TouchableOpacity style={styles.addToCartButton} onPress={() => handleCall(product.farmer.mobileNumber)}>
+              <Text style={styles.addToCartText}>Contact</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.addToCartButton} onPress={handleWhatsapp}>
+              <Text style={styles.addToCartText}>Whatsapp</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -72,8 +93,7 @@ export default function VegetableProductDetails() {
         <View style={styles.descriptionContainer}>
           <Text style={styles.descriptionTitle}>Product Description</Text>
           <Text style={styles.descriptionText}>
-            Our fresh broccoli is hand-picked from local farms, ensuring the highest quality and nutritional value. 
-            Rich in vitamins and minerals, this versatile vegetable is perfect for steaming, roasting, or adding to your favorite recipes.
+            {product.description}
           </Text>
         </View>
       </ScrollView>
@@ -86,16 +106,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F0FDF4",
   },
-  navfix:{
+  navfix: {
     padding: 16,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginTop:30
+    marginTop: 30,
   },
   header: {
-    backgroundColor: "#34D399",
-    
+    backgroundColor: "#044c0d",
   },
   headerButton: {
     padding: 8,
@@ -104,19 +123,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "600",
     color: "white",
-  },
-  badge: {
-    position: "absolute",
-    top: -5,
-    right: -5,
-    backgroundColor: "#EF4444",
-    borderRadius: 8,
-    paddingHorizontal: 4,
-    paddingVertical: 2,
-  },
-  badgeText: {
-    color: "white",
-    fontSize: 10,
   },
   main: {
     padding: 16,
@@ -143,68 +149,18 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#065F46",
   },
-  productWeight: {
-    color: "#047857",
-    marginVertical: 8,
-  },
-  priceContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 16,
-  },
-  price: {
-    fontSize: 28,
-    fontWeight: "bold",
-    color: "#065F46",
-  },
-  badgeAvailable: {
-    backgroundColor: "#D1FAE5",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
-  },
-  badgeAvailableText: {
-    color: "#065F46",
-    fontSize: 12,
-  },
-  ratingContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 16,
-  },
-  ratingText: {
-    marginLeft: 8,
-    color: "#065F46",
-    fontSize: 16,
-  },
   guaranteeText: {
     color: "#065F46",
     marginBottom: 16,
-  },
-  readMoreText: {
-    color: "#34D399",
-    textDecorationLine: "underline",
   },
   quantityContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-  },
-  quantityControls: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderColor: "#D1FAE5",
-    borderWidth: 1,
-    borderRadius: 9999,
-  },
-  quantityText: {
-    marginHorizontal: 16,
-    fontSize: 18,
-    color: "#065F46",
+    marginBottom: 16,
   },
   addToCartButton: {
-    backgroundColor: "#34D399",
+    backgroundColor: "#044c0d",
     paddingHorizontal: 32,
     paddingVertical: 12,
     borderRadius: 9999,

@@ -10,6 +10,9 @@ import FarmerDashboard from './components/FarmerDashboard';
 import Setting from './components/Setting';
 import Profile from './components/Profile';
 import Notifications from './components/Notification';
+import Search from './components/Search';
+import Post from './components/Post';
+import ProductDetails from './components/ProductDetails';
 
 const Stack = createStackNavigator();
 
@@ -25,6 +28,9 @@ const App = () => {
         <Stack.Screen name="Profile" component={Profile} />
         <Stack.Screen name="Setting" component={Setting} />
         <Stack.Screen name="Notifications" component={Notifications} />
+        <Stack.Screen name="Search" component={Search} />
+        <Stack.Screen name="Post" component={Post} />
+        <Stack.Screen name="ProductDetails" component={ProductDetails} />
       </Stack.Navigator>
     </NavigationContainer>
   );

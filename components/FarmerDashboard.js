@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Dimensions, Image } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { useNavigation } from '@react-navigation/native'; 
+import { useNavigation } from '@react-navigation/native';
 
 const HomePage = () => {
   const screenWidth = Dimensions.get('window').width;
@@ -10,15 +10,27 @@ const HomePage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigation = useNavigation();
+
   const handleHumburger = () => {
     navigation.navigate('Profile'); 
   };
+  const handleSearch = () => {
+    navigation.navigate('Search'); 
+  };
+  const handleNotification = () => {
+    navigation.navigate('Notifications'); 
+  };
+  const handlePost = () => {
+    navigation.navigate('Post'); 
+  };
+
   useEffect(() => {
     // Fetch data for fruits
     fetch('https://annadaata-backend.onrender.com/api/fruits')
       .then(response => response.json())
       .then(data => {
         setFruits(data);
+        console.log(data);
       })
       .catch(error => {
         console.error('Error fetching fruits:', error);
@@ -47,6 +59,10 @@ const HomePage = () => {
   if (loading) return <Text>Loading...</Text>;
   if (error) return <Text>Error: {error}</Text>;
 
+  const handleProductClick = (product) => {
+    navigation.navigate('ProductDetails', { product });
+  };
+
   return (
     <View style={styles.container}>
       {/* Header */}
@@ -55,8 +71,8 @@ const HomePage = () => {
           <Ionicons onPress={handleHumburger} name="menu-outline" size={24} color="white" />
           <Text style={styles.headerTitle}>Annadaata</Text>
           <View style={styles.iconContainer}>
-            <Ionicons name="search-outline" size={24} color="white" />
-            <Ionicons name="notifications-outline" size={24} color="white" style={styles.iconSpacing} />
+            <Ionicons onPress={handleSearch} name="search-outline" size={24} color="white" />
+            <Ionicons onPress={handleNotification} name="notifications-outline" size={24} color="white" style={styles.iconSpacing} />
           </View>
         </View>
       </View>
@@ -67,16 +83,18 @@ const HomePage = () => {
         <View style={styles.section}>
           <ScrollView horizontal pagingEnabled showsHorizontalScrollIndicator={false} contentContainerStyle={styles.carousel}>
             {fruits.map((fruit, index) => (
-              <View key={index} style={styles.carouselItem}>
-                <View style={styles.card}>
-                  <Image
-                    source={{ uri: fruit.imageUrls[0] ? `https://drive.google.com/uc?export=view&id=${fruit.imageUrls[3]}` : 'https://via.placeholder.com/200' }}
-                    style={styles.image}
-                  />
-                  <Text style={styles.newsText}>{fruit.name}</Text>
-                  <Text style={styles.description}>{fruit.description}</Text>
+              <TouchableOpacity key={index} onPress={() => handleProductClick(fruit)}>
+                <View style={styles.carouselItem}>
+                  <View style={styles.card}>
+                    <Image
+                      source={{ uri: fruit.imageUrls[0] ? `https://drive.google.com/uc?export=view&id=${fruit.imageUrls[3]}` : 'https://via.placeholder.com/200' }}
+                      style={styles.image}
+                    />
+                    <Text style={styles.newsText}>{fruit.name}</Text>
+                    <Text style={styles.description}>{fruit.description}</Text>
+                  </View>
                 </View>
-              </View>
+              </TouchableOpacity>
             ))}
           </ScrollView>
         </View>
@@ -86,13 +104,15 @@ const HomePage = () => {
           <Text style={styles.sectionTitle}>Vegetable Recommendations</Text>
           <ScrollView horizontal pagingEnabled showsHorizontalScrollIndicator={false} contentContainerStyle={styles.carousel}>
             {vegetables.map((vegetable, index) => (
-              <View key={index} style={styles.carouselItem}>
-                <View style={styles.card}>
-                  <Image source={{ uri: vegetable.imageUrls[0] ? `https://drive.google.com/uc?export=view&id=${vegetable.imageUrls[2]}` : 'https://via.placeholder.com/150' }} style={styles.image} />
-                  <Text style={styles.vegetableText}>{vegetable.name}</Text>
-                  <Text style={styles.description}>{vegetable.description}</Text>
+              <TouchableOpacity key={index} onPress={() => handleProductClick(vegetable)}>
+                <View style={styles.carouselItem}>
+                  <View style={styles.card}>
+                    <Image source={{ uri: vegetable.imageUrls[0] ? `https://drive.google.com/uc?export=view&id=${vegetable.imageUrls[2]}` : 'https://via.placeholder.com/150' }} style={styles.image} />
+                    <Text style={styles.vegetableText}>{vegetable.name}</Text>
+                    <Text style={styles.description}>{vegetable.description}</Text>
+                  </View>
                 </View>
-              </View>
+              </TouchableOpacity>
             ))}
           </ScrollView>
         </View>
@@ -102,46 +122,49 @@ const HomePage = () => {
           <Text style={styles.sectionTitle}>Other Products</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.productList}>
             {[
-              { name: 'Fertilizer', description: 'Boost crop growth naturally.', images: "https://www.fertilizer-machine.net/wp-content/uploads/2018/06/types-of-fertilizer.jpg" },
-              { name: 'Seeds', description: 'High-quality seeds for better yield.', images: "https://www.taropumps.com/media/2538/type-of-seeds-2.jpg" },
-              { name: 'Tools', description: 'Durable tools for farming.', images: "https://st2.depositphotos.com/1316172/10351/i/950/depositphotos_103513836-stock-photo-two-tractors-in-a-field.jpg" },
+              { name: 'Fertilizer', description: 'Boost crop growth naturally.', imageUrls: ["https://www.fertilizer-machine.net/wp-content/uploads/2018/06/types-of-fertilizer.jpg"] },
+              { name: 'Seeds', description: 'High-quality seeds for better yield.', imageUrls: ["https://www.taropumps.com/media/2538/type-of-seeds-2.jpg"] },
+              { name: 'Tools', description: 'Durable tools for farming.', imageUrls: ["https://st2.depositphotos.com/1316172/10351/i/950/depositphotos_103513836-stock-photo-two-tractors-in-a-field.jpg"] },
             ].map((product, index) => (
-              <View key={index} style={styles.productItem}>
-                <View style={styles.card}>
-                  <Image source={{ uri: product.images }} style={styles.image} />
-                  <Text style={styles.productText}>{product.name}</Text>
-                  <Text style={styles.description}>{product.description}</Text>
+              <TouchableOpacity key={index} onPress={() => handleProductClick(product)}>
+                <View style={styles.productItem}>
+                  <View style={styles.card}>
+                    <Image source={{ uri: product.imageUrls[0] }} style={styles.image} />
+                    <Text style={styles.productText}>{product.name}</Text>
+                    <Text style={styles.description}>{product.description}</Text>
+                  </View>
                 </View>
-              </View>
+              </TouchableOpacity>
             ))}
           </ScrollView>
         </View>
 
         {/* Top Categories */}
         <View style={styles.section}>
-  <Text style={styles.sectionTitle}>Top Categories</Text>
-  <View style={styles.categoryGrid}>
-    {[
-      { name: 'Vegetables', image: require('../images/vegetable.png') }, // Corrected local image
-      { name: 'Fruits', image: require('../images/healthy-food.png') },
-      { name: 'Crops', image: require('../images/wheat.png' )},
-      { name: 'Spices', image: require('../images/spices.png') },
-      { name: 'Land', image: require('../images/land.png') },
-      { name: 'Others', image: require('../images/delivery-box.png') }
-    ].map((category, index) => (
-      <View key={index} style={styles.categoryItem}>
-        <View style={styles.categoryIcon}>
-          <Image 
-            source={typeof category.image === 'string' ? { uri: category.image } : category.image}
-            style={styles.categoryImage}
-          />
+          <Text style={styles.sectionTitle}>Top Categories</Text>
+          <View style={styles.categoryGrid}>
+            {[
+              { name: 'Vegetables', image: require('../images/vegetable.png') }, 
+              { name: 'Fruits', image: require('../images/healthy-food.png') },
+              { name: 'Crops', image: require('../images/wheat.png')},
+              { name: 'Spices', image: require('../images/spices.png') },
+              { name: 'Land', image: require('../images/land.png') },
+              { name: 'Others', image: require('../images/delivery-box.png') }
+            ].map((category, index) => (
+              <View key={index} style={styles.categoryItem}>
+                <View style={styles.categoryIcon}>
+                  <Image 
+                    source={typeof category.image === 'string' ? { uri: category.image } : category.image}
+                    style={styles.categoryImage}
+                  />
+                </View>
+                <Text style={styles.categoryText}>{category.name}</Text>
+              </View>
+            ))}
+          </View>
         </View>
-        <Text style={styles.categoryText}>{category.name}</Text>
-      </View>
-    ))}
-  </View>
-</View>
       </ScrollView>
+
       {/* Footer */}
       <View style={styles.footer}>
         <TouchableOpacity style={styles.footerButton}>
@@ -149,7 +172,7 @@ const HomePage = () => {
           <Text style={styles.footerText}>Home</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.postButton}>
+        <TouchableOpacity onPress={handlePost} style={styles.postButton}>
           <View style={styles.postIconWrapper}>
             <Ionicons name="add" size={32} color="white" style={styles.plusIcon} />
           </View>
@@ -239,7 +262,7 @@ const styles = StyleSheet.create({
   },
   newsText: {
     fontSize: 24,
-    fontWeight: 'bold',
+    // fontWeight: 'bold',
     color: '#2d2c2c',
   },
   vegetableText: {
@@ -255,7 +278,7 @@ const styles = StyleSheet.create({
   },
   productText: {
     fontSize: 18,
-    color: '#388E3C',
+    color: '#000000',
   },
   sectionTitle: {
     fontSize: 20,
@@ -289,7 +312,7 @@ const styles = StyleSheet.create({
   },
   categoryText: {
     fontSize: 14,
-    color: '#388E3C',
+    color: '#000000',
   },
   description: {
     fontSize: 14,
