@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, TouchableOpacity, Image, ScrollView, StyleSheet } from "react-native";
-import { User, Lock, Clock, HelpCircle, LogOut, ChevronRight } from "lucide-react-native";
+import { User, Lock, Signpost, HelpCircle, LogOut, ChevronRight } from "lucide-react-native";
 import { useNavigation } from '@react-navigation/native';
 
 export default function Profile() {
@@ -37,9 +37,8 @@ export default function Profile() {
         {[
           { label: "Profile", icon: <User width={24} height={24} color="#6B7280" /> },
           { label: "Change Password", icon: <Lock width={24} height={24} color="#6B7280" /> },
-          { label: "Order History", icon: <Clock width={24} height={24} color="#6B7280" /> },
           // { label: "My Farm", icon: <Tractor width={24} height={24} color="#6B7280" /> },
-          // { label: "My Products", icon: <Carrot width={24} height={24} color="#6B7280" /> },
+          { label: "My Posts", icon: <Signpost width={24} height={24} color="#6B7280" /> },
           { label: "Support", icon: <HelpCircle width={24} height={24} color="#6B7280" /> },
         ].map((item, index) => (
           <TouchableOpacity key={index} style={styles.navItem}>

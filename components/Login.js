@@ -1,28 +1,59 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, ImageBackground, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, TextInput, ImageBackground, TouchableOpacity, StyleSheet, Image, Alert, ActivityIndicator } from 'react-native';
 import { EyeIcon, EyeOffIcon } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
+import axios from 'axios'; // Import axios
 
-export default function Component() {
+const API_URL = 'https://annadaata-backend.onrender.com/api/users/login'; // Replace with your actual backend URL
+
+export default function LoginComponent() {
+  const [emailAddress, setEmailAddress] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false); // Loading state
   const navigation = useNavigation();
 
-  const handleGetStarted = () => {
-    navigation.navigate('Register'); 
+  const handleSignUp = () => {
+    navigation.navigate('Register');
   };
 
-  const handleLoginButton = () => {
-    navigation.navigate('FarmerDashboard'); 
+  const handleLoginButton = async () => {
+    setLoading(true); // Set loading to true when request starts
+    try {
+      const response = await axios.post(API_URL, {
+        emailAddress,
+        password,
+      });
+
+      if (response.status === 200) {
+        const { token } = response.data;
+        // You might want to store the token in local storage or context here
+        Alert.alert('Login Successful', 'Welcome!');
+        navigation.navigate('FarmerDashboard');
+      } else {
+        Alert.alert('Login Failed', response.data.message || 'Unknown error occurred');
+      }
+    } catch (error) {
+      console.error(error);
+      if (error.response) {
+        Alert.alert('Error', `Server responded with status ${error.response.status}: ${error.response.data.message}`);
+      } else if (error.request) {
+        Alert.alert('Error', 'No response received from the server');
+      } else {
+        Alert.alert('Error', `Error: ${error.message}`);
+      }
+    } finally {
+      setLoading(false); // Set loading to false after request completes
+    }
   };
 
   return (
     <View style={styles.container}>
-      {/* Image that covers the entire view */}
       <View style={styles.imageContainer}>
         <ImageBackground 
           source={require('../images/slider.jpg')}
           style={styles.image}
-          resizeMode="cover" 
+          resizeMode="cover"
         >
           <View style={styles.overlay}>
             <Text style={styles.title}>Annadaata</Text>
@@ -30,7 +61,6 @@ export default function Component() {
         </ImageBackground>
       </View>
 
-      {/* Login Form */}
       <View style={styles.formContainer}>
         <Text style={styles.formTitle}>Let's Connect With Us!</Text>
         <View style={styles.inputContainer}>
@@ -38,6 +68,8 @@ export default function Component() {
             style={styles.input}
             placeholder="Email or Phone Number"
             keyboardType="email-address"
+            value={emailAddress}
+            onChangeText={(text) => setEmailAddress(text)}
           />
         </View>
         <View style={styles.inputContainer}>
@@ -45,6 +77,8 @@ export default function Component() {
             style={styles.input}
             placeholder="Password"
             secureTextEntry={!showPassword}
+            value={password}
+            onChangeText={(text) => setPassword(text)}
           />
           <TouchableOpacity
             style={styles.iconContainer}
@@ -61,29 +95,29 @@ export default function Component() {
           <Text style={styles.forgotPassword}>Forgot Password?</Text>
         </TouchableOpacity>
         
-        {/* Make the button trigger login action */}
-        <TouchableOpacity style={styles.loginButton} onPress={handleLoginButton}>
-          <Text style={styles.loginButtonText}>Login</Text>
+        <TouchableOpacity style={styles.loginButton} onPress={handleLoginButton} disabled={loading}>
+          {loading ? (
+            <ActivityIndicator size="small" color="#fff" />
+          ) : (
+            <Text style={styles.loginButtonText}>Login</Text>
+          )}
         </TouchableOpacity>
       </View>
 
-      {/* Or Divider */}
       <View style={styles.orContainer}>
         <View style={styles.line} />
         <Text style={styles.orText}>or</Text>
         <View style={styles.line} />
       </View>
 
-      {/* Google Sign In Button */}
       <TouchableOpacity style={styles.googleButton}>
         <Image source={require('../images/google-logo.png')} style={styles.googleLogo} />
         <Text style={styles.googleButtonText}>Sign up with Google</Text>
       </TouchableOpacity>
 
-      {/* Sign Up Link */}
       <Text style={styles.signupText}>
         Don't have an account?{' '}
-        <Text onPress={handleGetStarted} style={styles.signupLink}>Sign Up</Text>
+        <Text onPress={handleSignUp} style={styles.signupLink}>Sign Up</Text>
       </Text>
     </View>
   );
