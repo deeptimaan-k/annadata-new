@@ -105,14 +105,14 @@ const styles = {
 
 export default function SearchResults() {
   const products = [
-    { name: "Organic Baby Spinach",description:"Tender, nutrient-rich spinach leaves with a mild flavor, grown without synthetic chemicals."},
-    { name: "Fresh Cherry Tomatoes",description:"Fresh Cherry Tomatoes: Sweet, juicy, and bite-sized tomatoes, perfect for snacking or adding a burst of flavor to dishes." },
-    { name: "Crisp Romaine Lettuce", description:"Crunchy, leafy greens with a slightly bitter taste, ideal for salads and wraps." },
-    { name: "Mixed Bell Peppers", description:"Vibrant, sweet peppers in various colors, adding crunch and flavor to salads, stir-fries, and dishes." },
-    { name: "Organic Kale", description:"Nutrient-dense, dark green leaves with a robust flavor, perfect for salads, smoothies, and cooking." },
-    { name: "Zucchini", description:"Mild-flavored, versatile squash with tender flesh, great for grilling, sautéing, or adding to baked dishes."},
-    { name: "Organic Carrots", description:"Sweet, crunchy root vegetables grown without synthetic chemicals, perfect for snacking or cooking."},
-    { name: "Red Radishes", description:" Crisp, spicy root vegetables with a vibrant color, ideal for adding a peppery kick to salads and dishes."},
+    { name: "Organic Baby Spinach",description:"Tender, nutrient-rich spinach leaves with a mild flavor, grown without synthetic chemicals.",images:"https://www.orgpick.com/cdn/shop/products/spnach_large_01cac1a1-246f-433c-b02b-e2c7986fe95c.jpg"},
+    { name: "Fresh Cherry Tomatoes",description:"Fresh Cherry Tomatoes: Sweet, juicy, and bite-sized tomatoes, perfect for snacking or adding a burst of flavor to dishes.",images:"https://frugivore-bucket.s3.amazonaws.com/media/package/img_one/2020-02-14/Cherry_Tomato_Red_01.jpg"},
+    { name: "Crisp Romaine Lettuce", description:"Crunchy, leafy greens with a slightly bitter taste, ideal for salads and wraps.",images:"https://slyce-product.s3.ap-south-1.amazonaws.com/EXOTIC%20VEGETABLES_null_ROMAINE%20LETTUCE_image_2023-07-10T06%3A29%3A25.475.png" },
+    { name: "Mixed Bell Peppers", description:"Vibrant, sweet peppers in various colors, adding crunch and flavor to salads, stir-fries, and dishes.",images:"https://www.simplyseed.co.uk/user/products/large/Pepper%20Rainbow%20Mixed.jpg" },
+    { name: "Organic Kale", description:"Nutrient-dense, dark green leaves with a robust flavor, perfect for salads, smoothies, and cooking.",images:"https://m.media-amazon.com/images/I/51Ai1lYnQdL._AC_UF894,1000_QL80_.jpg" },
+    { name: "Zucchini", description:"Mild-flavored, versatile squash with tender flesh, great for grilling, sautéing, or adding to baked dishes.",images:"https://www.allthatgrows.in/cdn/shop/articles/Optimized-Feat_image-Zucchini_1_1100x1100.jpg"},
+    { name: "Organic Carrots", description:"Sweet, crunchy root vegetables grown without synthetic chemicals, perfect for snacking or cooking.",images:"https://organicbazar.net/cdn/shop/products/Untitled-design-13-1.jpg"},
+    { name: "Red Radishes", description:" Crisp, spicy root vegetables with a vibrant color, ideal for adding a peppery kick to salads and dishes.",images:"https://specialtyproduce.com/sppics/1241.png"},
   ];
 
   // Helper function to group products into pairs
@@ -178,7 +178,7 @@ export default function SearchResults() {
             {productPair.map((product) => (
               <View style={styles.productCard} key={product.name}>
                 <Image
-                  source={{ uri: '/placeholder.svg?height=150&width=150' }} // Replace with actual image URL
+                  source={{ uri:styles.productCard }} // Replace with actual image URL
                   style={styles.productImage}
                 />
                 <View style={styles.productInfo}>
