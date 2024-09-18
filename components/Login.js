@@ -3,8 +3,9 @@ import { View, Text, TextInput, ImageBackground, TouchableOpacity, StyleSheet, I
 import { EyeIcon, EyeOffIcon } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios'; // Import axios
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API_URL = 'https://annadaata-backend.onrender.com/api/users/login'; // Replace with your actual backend URL
+const API_URL = 'https://annadaata-backend.onrender.com/api/users/login'; 
 
 export default function LoginComponent() {
   const [emailAddress, setEmailAddress] = useState('');
@@ -26,9 +27,10 @@ export default function LoginComponent() {
       });
 
       if (response.status === 200) {
-        const { token } = response.data;
-        // You might want to store the token in local storage or context here
-        Alert.alert('Login Successful', 'Welcome!');
+        const { token, user } = response.data;
+        // Store token and email in local storage or a global state
+        await AsyncStorage.setItem('token', token);
+        await AsyncStorage.setItem('email', emailAddress);
         navigation.navigate('FarmerDashboard');
       } else {
         Alert.alert('Login Failed', response.data.message || 'Unknown error occurred');
@@ -123,6 +125,7 @@ export default function LoginComponent() {
   );
 }
 
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -181,13 +184,13 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   loginButton: {
-    backgroundColor: '#B5E550',
+    backgroundColor: '#044c0d',
     paddingVertical: 12,
     borderRadius: 5,
     alignItems: 'center',
   },
   loginButtonText: {
-    color: '#000',
+    color: '#fff',
     fontWeight: '600',
     fontSize: 16,
   },
@@ -228,10 +231,10 @@ const styles = StyleSheet.create({
   signupText: {
     textAlign: 'center',
     marginTop: 20,
-    color: '#6b6b6b',
+    color: '#044c0d',
   },
   signupLink: {
-    color: '#B5E550',
+    color: '#044c0d',
     fontWeight: '600',
   },
 });

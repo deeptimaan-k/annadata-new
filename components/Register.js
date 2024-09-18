@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Alert, Image, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Alert, Image, } from 'react-native';
 import { EyeIcon, EyeOffIcon } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
-import RNPickerSelect from 'react-native-picker-select';
 import axios from 'axios';
 
 export default function Component() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
-  const [accountType, setAccountType] = useState(null);
   const [fullName, setFullName] = useState('');
   const [emailAddress, setEmailAddress] = useState('');
   const [mobileNumber, setMobileNumber] = useState('');
@@ -33,7 +31,6 @@ export default function Component() {
     setIsLoading(true);
     try {
       const response = await axios.post('https://annadaata-backend.onrender.com/api/users/register', {
-        accountType,
         fullName,
         emailAddress,
         mobileNumber,
@@ -41,7 +38,7 @@ export default function Component() {
         termsAccepted,
       });
       Alert.alert('Success', 'Account created successfully.');
-      navigation.navigate('Login');
+      navigation.navigate('FarmerDashboard');
     } catch (error) {
       if (error.response) {
         Alert.alert('Error', error.response.data.message || 'Something went wrong.');
@@ -67,19 +64,6 @@ export default function Component() {
         <Text style={styles.title}>Create Account</Text>
         <Text style={styles.subTitle}>Please create your account</Text>
         <View style={styles.form}>
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Account Type</Text>
-            <RNPickerSelect
-              onValueChange={(value) => setAccountType(value)}
-              items={[
-                { label: 'Farmer', value: 'Farmer' },
-                { label: 'Buyer', value: 'Buyer' }
-              ]}
-              placeholder={{ label: 'Select an account type...', value: null }}
-              style={pickerSelectStyles}
-              value={accountType}
-            />
-          </View>
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Full Name</Text>
             <TextInput

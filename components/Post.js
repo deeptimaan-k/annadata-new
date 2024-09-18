@@ -3,8 +3,14 @@ import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet } from 
 import { Ionicons, FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
 import RNPickerSelect from 'react-native-picker-select';
 import { Button } from 'react-native-paper';
+import { useNavigation } from '@react-navigation/native'; 
+
 
 export default function ProductAdditionPage() {
+  const navigation = useNavigation();
+  const handleBack = () => {
+    navigation.navigate('FarmerDashboard'); 
+  };
   const [category, setCategory] = useState('');
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -19,7 +25,7 @@ export default function ProductAdditionPage() {
       <View style={styles.header}>
         <View style={styles.navfix}>
           <TouchableOpacity style={styles.iconButton}>
-            <Ionicons name="arrow-back" size={24} color="white" />
+            <Ionicons onPress={handleBack} name="arrow-back" size={24} color="white" />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Add Product</Text>
         </View>
@@ -130,7 +136,7 @@ export default function ProductAdditionPage() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f5f5f5' },
   header: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#044c0d',
     padding: 30,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -141,6 +147,7 @@ const styles = StyleSheet.create({
   navfix: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginTop:12
   },
   iconButton: { marginRight: 16 },
   headerTitle: { color: 'white', fontSize: 24, fontWeight: 'bold' },
@@ -170,7 +177,7 @@ const styles = StyleSheet.create({
     marginBottom: 20 
   },
   uploadText: { marginTop: 10, color: '#888' },
-  saveButton: { marginTop: 20, backgroundColor: '#4CAF50' }
+  saveButton: { marginTop: 20, backgroundColor: '#044c0d' }
 });
 
 const pickerSelectStyles = {

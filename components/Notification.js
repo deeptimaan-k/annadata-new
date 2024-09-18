@@ -1,20 +1,16 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
-import {  Check } from "lucide-react-native";
+import { ChevronLeft, Check } from "lucide-react-native";
 import { Button } from 'react-native-paper';
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import { Bell, User} from 'lucide-react-native';
+
 import { useNavigation } from '@react-navigation/native';
 
 const NotificationsPage = () => {
   const [tab, setTab] = useState("new");
   const navigation = useNavigation();
 
-  const handleHumbugger = () => {
-    navigation.navigate('Profile');
-  };
-  const handleGoToHome = () => {
-    navigation.navigate('FarmerDashboard');
+  const handleGoToDashboard = () => {
+    navigation.navigate('FarmerDashboard'); 
   };
   const newNotifications = [
     { id: 1, title: "Your order has been delivered", time: "2h ago", icon: "🚚" },
@@ -42,13 +38,11 @@ const NotificationsPage = () => {
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.fixnav}>
-          <TouchableOpacity onPress={handleHumbugger}>
-            <Button mode="text" style={styles.menuButton}>
-              <Icon name="menu" size={24} color="#fff" />
-            </Button>
-          </TouchableOpacity>
+        <TouchableOpacity onPress={handleGoToDashboard} style={styles.closeButton}>
+          <ChevronLeft width={24} height={24} color="white" />
+        </TouchableOpacity>
 
-          <Text style={styles.headerTitle}>Annadaata</Text>
+          <Text style={styles.headerTitle}>Notifications</Text>
           <Button mode="text" style={styles.notificationButton}>
             {/* <Bell size={24} color="#fff" /> */}
           </Button>
@@ -103,24 +97,6 @@ const NotificationsPage = () => {
               </View>
             ))}
       </ScrollView>
-      <View style={styles.footer}>
-        <Button onPress={handleGoToHome} style={styles.footerButton}>
-          <Icon name="home" size={24} color="#d1d5db" />
-          <Text style={styles.footerText}></Text>
-        </Button>
-        <Button style={styles.footerButton}>
-          <Bell size={24} color="#fff" />
-          <Text style={styles.footerText}></Text>
-        </Button>
-        {/* <Button style={styles.footerButton}>
-          <Clock size={24} color="#d1d5db" />
-          <Text style={styles.footerText}></Text>
-        </Button> */}
-        <Button style={styles.footerButton}>
-          <User size={24} color="#d1d5db" />
-          <Text style={styles.footerText}></Text>
-        </Button>
-      </View>
     </View>
   );
 };
@@ -131,7 +107,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#e6f4ea",
   },
   header: {
-    backgroundColor: '#059669',
+    backgroundColor: '#044c0d',
     padding: 16,
   },
   fixnav: {
