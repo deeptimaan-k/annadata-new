@@ -1,319 +1,337 @@
-import React from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { Button, Card } from 'react-native-paper';
-import { Bell, Clock, User, Plus, ShoppingBag } from 'lucide-react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import { useNavigation } from '@react-navigation/native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Dimensions, Image } from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useNavigation } from '@react-navigation/native'; 
 
-export default function Dashboard() {
+const HomePage = () => {
+  const screenWidth = Dimensions.get('window').width;
+  const [fruits, setFruits] = useState([]);
+  const [vegetables, setVegetables] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const navigation = useNavigation();
+  const handleHumburger = () => {
+    navigation.navigate('Profile'); 
+  };
+  useEffect(() => {
+    // Fetch data for fruits
+    fetch('https://annadaata-backend.onrender.com/api/fruits')
+      .then(response => response.json())
+      .then(data => {
+        setFruits(data);
+      })
+      .catch(error => {
+        console.error('Error fetching fruits:', error);
+        setError(error.message);
+      });
 
-  const handleHumbugger = () => {
-    navigation.navigate('Profile');
-  };
-  const handleNotification = () => {
-    navigation.navigate('Notifications');
-  };
+    // Fetch data for vegetables
+    fetch('https://annadaata-backend.onrender.com/api/vegetable')
+      .then(response => response.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setVegetables(data);
+        } else {
+          console.error('Unexpected data format for vegetables:', data);
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching vegetables:', error);
+        setError(error.message);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) return <Text>Loading...</Text>;
+  if (error) return <Text>Error: {error}</Text>;
 
   return (
     <View style={styles.container}>
+      {/* Header */}
       <View style={styles.header}>
-        <View style={styles.fixnav}>
-          <TouchableOpacity onPress={handleHumbugger}>
-            <Button mode="text" style={styles.menuButton}>
-              <Icon name="menu" size={24} color="#fff" />
-            </Button>
-          </TouchableOpacity>
-
+        <View style={styles.navfix}>
+          <Ionicons onPress={handleHumburger} name="menu-outline" size={24} color="white" />
           <Text style={styles.headerTitle}>Annadaata</Text>
-          <Button mode="text" style={styles.notificationButton}>
-            {/* <Bell size={24} color="#fff" /> */}
-          </Button>
+          <View style={styles.iconContainer}>
+            <Ionicons name="search-outline" size={24} color="white" />
+            <Ionicons name="notifications-outline" size={24} color="white" style={styles.iconSpacing} />
+          </View>
         </View>
       </View>
 
-      <ScrollView style={styles.main}>
-        <View style={styles.cardsContainer}>
-          <Card style={[styles.card, styles.deliveredCard]}>
-            <Card.Content style={styles.cardContent}>
-              {/* Use a checkmark or truck icon for Delivered */}
-              <Icon name="check-circle" size={32} color="#4a5568" />
-              <Text style={styles.cardTitle}>Delivered</Text>
-              <Text style={styles.cardCount}>27</Text>
-            </Card.Content>
-          </Card>
-          <Card style={[styles.card, styles.pendingCard]}>
-            <Card.Content style={styles.cardContent}>
-              {/* Use a clock or hourglass icon for Pending */}
-              <Icon name="hourglass-empty" size={32} color="#b45321" />
-              <Text style={styles.cardTitle}>Pending</Text>
-              <Text style={styles.cardCount}>10</Text>
-            </Card.Content>
-          </Card>
-          <Card style={[styles.card, styles.cancelledCard]}>
-            <Card.Content style={styles.cardContent}>
-              {/* Use a cancel or cross icon for Cancelled */}
-              <Icon name="cancel" size={32} color="#dc2626" />
-              <Text style={styles.cardTitle}>Cancelled</Text>
-              <Text style={styles.cardCount}>05</Text>
-            </Card.Content>
-          </Card>
-          <Card style={[styles.card, styles.returnedCard]}>
-            <Card.Content style={styles.cardContent}>
-              {/* Use a return or refresh icon for Returned */}
-              <Icon name="refresh" size={32} color="#f97316" />
-              <Text style={styles.cardTitle}>Returned</Text>
-              <Text style={styles.cardCount}>16</Text>
-            </Card.Content>
-          </Card>
+      {/* Main Content */}
+      <ScrollView contentContainerStyle={styles.mainContent}>
+        {/* Fruits Carousel */}
+        <View style={styles.section}>
+          <ScrollView horizontal pagingEnabled showsHorizontalScrollIndicator={false} contentContainerStyle={styles.carousel}>
+            {fruits.map((fruit, index) => (
+              <View key={index} style={styles.carouselItem}>
+                <View style={styles.card}>
+                  <Image
+                    source={{ uri: fruit.imageUrls[0] ? `https://drive.google.com/uc?export=view&id=${fruit.imageUrls[3]}` : 'https://via.placeholder.com/200' }}
+                    style={styles.image}
+                  />
+                  <Text style={styles.newsText}>{fruit.name}</Text>
+                  <Text style={styles.description}>{fruit.description}</Text>
+                </View>
+              </View>
+            ))}
+          </ScrollView>
         </View>
 
-        <Text style={styles.sectionTitle}>New Orders</Text>
-        <View style={styles.orderContainer}>
-          <Card style={styles.orderCard}>
-            <Card.Content style={styles.orderContent}>
-              <Image source={{ uri: 'https://cdn.britannica.com/22/187222-050-07B17FB6/apples-on-a-tree-branch.jpg' }} style={styles.productImage} />
-              <View style={styles.orderTextContainer}>
-                <Text style={styles.orderTitle}>Fresh Apples</Text>
-                <Text style={styles.orderDescription}>5kg, Organic Red Delicious</Text>
-                <Text style={styles.orderTime}>08:40 AM</Text>
+        {/* Vegetable Recommendations */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Vegetable Recommendations</Text>
+          <ScrollView horizontal pagingEnabled showsHorizontalScrollIndicator={false} contentContainerStyle={styles.carousel}>
+            {vegetables.map((vegetable, index) => (
+              <View key={index} style={styles.carouselItem}>
+                <View style={styles.card}>
+                  <Image source={{ uri: vegetable.imageUrls[0] ? `https://drive.google.com/uc?export=view&id=${vegetable.imageUrls[2]}` : 'https://via.placeholder.com/150' }} style={styles.image} />
+                  <Text style={styles.vegetableText}>{vegetable.name}</Text>
+                  <Text style={styles.description}>{vegetable.description}</Text>
+                </View>
               </View>
-              <View style={styles.actionButtons}>
-                <Button mode="outlined" style={styles.rejectButton}>
-                  Reject
-                </Button>
-                <Button mode="contained" style={styles.acceptButton}>
-                  Accept
-                </Button>
-              </View>
-            </Card.Content>
-          </Card>
-          <Card style={styles.orderCard}>
-            <Card.Content style={styles.orderContent}>
-              <Image source={{ uri: 'https://as1.ftcdn.net/v2/jpg/01/20/47/06/1000_F_120470660_ha8n1vyrH0BVonoSjlod1GbualTYdPoA.jpg' }} style={styles.productImage} />
-              <View style={styles.orderTextContainer}>
-                <Text style={styles.orderTitle}>Organic Carrots</Text>
-                <Text style={styles.orderDescription}>2kg, Fresh Farm Carrots</Text>
-                <Text style={styles.orderTime}>09:15 AM</Text>
-              </View>
-              <View style={styles.actionButtons}>
-                <Button mode="outlined" style={styles.rejectButton}>
-                  Reject
-                </Button>
-                <Button mode="contained" style={styles.acceptButton}>
-                  Accept
-                </Button>
-              </View>
-            </Card.Content>
-          </Card>
+            ))}
+          </ScrollView>
         </View>
 
-        <Text style={styles.sectionTitle}>Add Product</Text>
-        <View style={styles.addProductContainer}>
-          {['Tomatoes', 'Lettuce', 'Cucumbers', 'Bell Peppers'].map((vegetable) => (
-            <Card key={vegetable} style={styles.addProductCard}>
-              <Card.Content style={styles.addProductContent}>
-                <View style={styles.addProductIconContainer}>
-                  <ShoppingBag size={24} color="#4a5568" />
+        {/* Other Products */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Other Products</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.productList}>
+            {[
+              { name: 'Fertilizer', description: 'Boost crop growth naturally.', images: "https://www.fertilizer-machine.net/wp-content/uploads/2018/06/types-of-fertilizer.jpg" },
+              { name: 'Seeds', description: 'High-quality seeds for better yield.', images: "https://www.taropumps.com/media/2538/type-of-seeds-2.jpg" },
+              { name: 'Tools', description: 'Durable tools for farming.', images: "https://st2.depositphotos.com/1316172/10351/i/950/depositphotos_103513836-stock-photo-two-tractors-in-a-field.jpg" },
+            ].map((product, index) => (
+              <View key={index} style={styles.productItem}>
+                <View style={styles.card}>
+                  <Image source={{ uri: product.images }} style={styles.image} />
+                  <Text style={styles.productText}>{product.name}</Text>
+                  <Text style={styles.description}>{product.description}</Text>
                 </View>
-                <View style={styles.addProductTextContainer}>
-                  <Text style={styles.addProductTitle}>{vegetable}</Text>
-                  <Text style={styles.addProductDescription}>Add to inventory</Text>
-                </View>
-                {/* <Button mode="contained" style={styles.addButton}>
-                  <Plus size={16} color="#fff" />
-                </Button> */}
-              </Card.Content>
-            </Card>
-          ))}
+              </View>
+            ))}
+          </ScrollView>
         </View>
+
+        {/* Top Categories */}
+        <View style={styles.section}>
+  <Text style={styles.sectionTitle}>Top Categories</Text>
+  <View style={styles.categoryGrid}>
+    {[
+      { name: 'Vegetables', image: require('../images/vegetable.png') }, // Corrected local image
+      { name: 'Fruits', image: require('../images/healthy-food.png') },
+      { name: 'Crops', image: require('../images/wheat.png' )},
+      { name: 'Spices', image: require('../images/spices.png') },
+      { name: 'Land', image: require('../images/land.png') },
+      { name: 'Others', image: require('../images/delivery-box.png') }
+    ].map((category, index) => (
+      <View key={index} style={styles.categoryItem}>
+        <View style={styles.categoryIcon}>
+          <Image 
+            source={typeof category.image === 'string' ? { uri: category.image } : category.image}
+            style={styles.categoryImage}
+          />
+        </View>
+        <Text style={styles.categoryText}>{category.name}</Text>
+      </View>
+    ))}
+  </View>
+</View>
       </ScrollView>
-
+      {/* Footer */}
       <View style={styles.footer}>
-        <Button style={styles.footerButton}>
-          <Icon name="home" size={24} color="#fff" />
-          <Text style={styles.footerText}></Text>
-        </Button>
-        <Button onPress={handleNotification} style={styles.footerButton}>
-          <Bell size={24} color="#d1d5db" />
-          <Text style={styles.footerText}></Text>
-        </Button>
-        {/* <Button style={styles.footerButton}>
-          <Clock size={24} color="#d1d5db" />
-          <Text style={styles.footerText}></Text>
-        </Button> */}
-        <Button style={styles.footerButton}>
-          <User size={24} color="#d1d5db" />
-          <Text style={styles.footerText}></Text>
-        </Button>
+        <TouchableOpacity style={styles.footerButton}>
+          <Ionicons name="home-outline" size={32} color="#ffff" />
+          <Text style={styles.footerText}>Home</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.postButton}>
+          <View style={styles.postIconWrapper}>
+            <Ionicons name="add" size={32} color="white" style={styles.plusIcon} />
+          </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.footerButton}>
+          <Ionicons name="person-outline" size={32} color="#b8dad5" />
+          <Text style={styles.footerText}>Profile</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
-}
+};
+
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f0fdf4',
+    backgroundColor: '#ffff',
   },
   header: {
-    backgroundColor: '#059669',
+    backgroundColor: '#044c0d',
     padding: 16,
   },
-  fixnav: {
+  navfix: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 25,
-  },
-  menuButton: {
-    padding: 8,
+    marginTop: 28,
   },
   headerTitle: {
-    fontSize: 28,
-    fontWeight: '600',
-    color: '#fff',
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: 'white',
+    marginLeft: 16,
   },
-  notificationButton: {
-    padding: 8,
+  iconContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
-  main: {
-    flex: 1,
+  iconSpacing: {
+    marginLeft: 17,
+  },
+  mainContent: {
     padding: 16,
   },
-  cardsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
+  section: {
     marginBottom: 16,
+  },
+  carousel: {
+    alignItems: 'center',
+  },
+  carouselItem: {
+    width: Dimensions.get('window').width - 64,
+    marginHorizontal: 16,
   },
   card: {
-    width: '48%',
-    borderRadius: 10,
-    marginBottom: 16,
-    padding: 16,
-  },
-  deliveredCard: {
-    backgroundColor: '#d1fae5',
-    borderColor: '#a7f3d0',
-  },
-  pendingCard: {
-    backgroundColor: '#fef3c7',
-    borderColor: '#fde047',
-  },
-  cancelledCard: {
-    backgroundColor: '#fee2e2',
-    borderColor: '#fca5a5',
-  },
-  returnedCard: {
-    backgroundColor: '#fdba74',
-    borderColor: '#f97316',
-  },
-  cardContent: {
+    justifyContent: 'center',
     alignItems: 'center',
+    padding: 16,
+    backgroundColor: '#daf2d3',
+    borderRadius: 8,
+    elevation: 5, // Adds a shadow for Android
+    shadowColor: '#000', // Adds a shadow for iOS
+    shadowOffset: { width: 2, height: 2 }, // iOS shadow settings
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+
   },
-  cardTitle: {
-    fontSize: 14,
-    fontWeight: '500',
+  recommendationCard: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 16,
+    backgroundColor: '#daf2d3',
+    borderRadius: 8,
+    elevation: 5, // Adds a shadow for Android
+    shadowColor: '#000', // Adds a shadow for iOS
+    shadowOffset: { width: 2, height: 2 }, // iOS shadow settings
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
   },
-  cardCount: {
+  image: {
+    width: '100%',
+    height: 150,
+    borderRadius: 8,
+    marginBottom: 8,
+  },
+  newsText: {
     fontSize: 24,
-    fontWeight: '700',
-    color: '#374151',
+    fontWeight: 'bold',
+    color: '#2d2c2c',
+  },
+  vegetableText: {
+    fontSize: 20,
+    color: '#2d2c2c',
+  },
+  productList: {
+    paddingHorizontal: 16,
+  },
+  productItem: {
+    width: 150,
+    marginHorizontal: 8,
+  },
+  productText: {
+    fontSize: 18,
+    color: '#388E3C',
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#374151',
-    marginBottom: 16,
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#2d2c2c',
+    marginBottom: 8,
   },
-  orderContainer: {
-    marginBottom: 16,
-  },
-  orderCard: {
-    marginBottom: 16,
-    borderRadius: 10,
-  },
-  orderContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 16,
-  },
-  productImage: {
-    width: 60,
-    height: 60,
-    borderRadius: 8,
-    marginRight: 16,
-  },
-  orderTextContainer: {
-    flex: 1,
-  },
-  orderTitle: {
-    fontSize: 16,
-    fontWeight: '500',
-  },
-  orderDescription: {
-    fontSize: 14,
-    color: '#6b7280',
-  },
-  orderTime: {
-    fontSize: 12,
-    color: '#9ca3af',
-  },
-  actionButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginLeft: 'auto',
-  },
-  rejectButton: {
-    marginRight: 8,
-  },
-  acceptButton: {
-    backgroundColor: '#34d399',
-  },
-  addProductContainer: {
+  categoryGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
   },
-  addProductCard: {
-    width: '48%',
-    marginBottom: 16,
-    borderRadius: 10,
-  },
-  addProductContent: {
-    flexDirection: 'row',
+  categoryItem: {
     alignItems: 'center',
-    padding: 16,
+    marginBottom: 16,
+    width: '30%',
   },
-  addProductIconContainer: {
-    marginRight: 16,
+  categoryIcon: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#A5D6A7',
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginBottom: 8,
   },
-  addProductTextContainer: {
-    flex: 1,
+  categoryImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
   },
-  addProductTitle: {
-    fontSize: 16,
-    fontWeight: '500',
-  },
-  addProductDescription: {
+  categoryText: {
     fontSize: 14,
-    color: '#6b7280',
+    color: '#388E3C',
   },
-  addButton: {
-    marginLeft: 16,
+  description: {
+    fontSize: 14,
+    color: '#2d2c2c',
+    textAlign: 'center',
+    marginTop: 4,
   },
   footer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    padding: 16,
-    backgroundColor: '#059669',
+    alignItems: 'center',
+    paddingVertical: 16,
+    backgroundColor: '#044c0d',
   },
   footerButton: {
     alignItems: 'center',
   },
   footerText: {
-    color: '#fff',
-    fontSize: 12,
+    fontSize: 14,
+    color: '#b8dad5',
+    marginTop: 4,
+  },
+  postButton: {
+    // backgroundColor: '#d0fae4',
+    borderRadius: 50,
+    padding: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    borderWidth: 2,  // Add this for the border width
+    borderColor: '#b8dad5',  // Add this for the white color
+  },
+  postIconWrapper: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
+
+
+
+
+export default HomePage;
