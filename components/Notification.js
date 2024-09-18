@@ -13,24 +13,21 @@ const NotificationsPage = () => {
     navigation.navigate('FarmerDashboard'); 
   };
   const newNotifications = [
-    { id: 1, title: "Your order has been delivered", time: "2h ago", icon: "🚚" },
-    { id: 2, title: "New seasonal vegetables available!", time: "4h ago", icon: "🥕" },
-    { id: 3, title: "Rate your last order", time: "1d ago", icon: "⭐" },
-    { id: 6, title: "Reminder: Weekly sale ends tomorrow", time: "1d ago", icon: "⏰" },
-    { id: 7, title: "Your payment has been processed", time: "3h ago", icon: "💳" },
-    { id: 8, title: "Your favorite item is back in stock!", time: "6h ago", icon: "🛒" },
-    { id: 9, title: "Order shipped: Track your delivery", time: "8h ago", icon: "📦" },
-    { id: 10, title: "Earn rewards with your next purchase", time: "1d ago", icon: "🏆" },
+    { id: 1, title: "The farmer you’ve previously contacted has just added new products. Check them out now", time: "2h ago" },
+    { id: 2, title: "Products from the farmer you bought from before are now available. Explore their latest offerings!", time: "4h ago" },
+    { id: 3, title: "The farmer you previously reached out to has posted fresh products", time : "1d ago"},
+    { id: 6, title: "New products have just been listed by the farmer you have purchased from", time: "1d ago"},
+    { id: 7, title: "The farmer you’ve connected with has added new items", time: "3h ago" },
+    { id: 8, title: " You’ve bought from this farmer before, and they’ve just listed new products", time: "6h ago"},
+    { id: 9, title: "   The farmer you’ve contacted has fresh products ready for you. Take a look", time: "8h ago" },
+    { id: 10, title: "The farmer you previously bought from has updated their stock. Explore the new items now!", time: "1d ago"},
   ];
 
   const readNotifications = [
-    { id: 4, title: "Update your delivery preferences", time: "2d ago", icon: "🔔" },
-    { id: 5, title: "20% off on organic fruits this week", time: "3d ago", icon: "🍎" },
-    { id: 11, title: "New recipe ideas with seasonal produce", time: "4d ago", icon: "📖" },
-    { id: 12, title: "Your refund has been processed", time: "5d ago", icon: "💰" },
-    { id: 13, title: "Order delay: Apologies for the inconvenience", time: "5d ago", icon: "🚨" },
-    { id: 14, title: "Download your invoice for your recent order", time: "6d ago", icon: "🧾" },
-    { id: 15, title: "Flash sale: Organic produce at 50% off!", time: "7d ago", icon: "⚡" },
+    { id: 4, title: "  The farmer you’ve contacted in the past has added new products. See what’s available now!", time: "2d ago" },
+    { id: 5, title: " Fresh goods just in from the farmer you’ve bought from before. Take a look at their latest harvest!", time: "3d ago"  },
+    { id: 11, title: " The farmer you contacted earlier has posted fresh products. Explore their updated listings now!", time: "4d ago" },
+ 
   ];
 
   return (
