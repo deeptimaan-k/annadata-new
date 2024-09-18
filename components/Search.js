@@ -105,14 +105,14 @@ const styles = {
 
 export default function SearchResults() {
   const products = [
-    { name: "Organic Baby Spinach", price: 3.99, oldPrice: 4.99, discount: "20% off", rating: 4.8, sales: 523, location: "Local Farm" },
-    { name: "Fresh Cherry Tomatoes", price: 2.99, rating: 4.7, sales: 412, location: "Greenhouse" },
-    { name: "Crisp Romaine Lettuce", price: 2.49, oldPrice: 2.99, discount: "15% off", rating: 4.5, sales: 378, location: "Hydroponic" },
-    { name: "Mixed Bell Peppers", price: 4.99, rating: 4.6, sales: 289, location: "Organic Valley" },
-    { name: "Organic Kale", price: 3.49, oldPrice: 3.99, discount: "10% off", rating: 4.4, sales: 330, location: "Eco Farms" },
-    { name: "Zucchini", price: 1.99, rating: 4.3, sales: 278, location: "Fresh Farms" },
-    { name: "Organic Carrots", price: 2.99, rating: 4.7, sales: 392, location: "Local Organic Farms" },
-    { name: "Red Radishes", price: 1.49, rating: 4.5, sales: 240, location: "Green Valley" },
+    { name: "Organic Baby Spinach",description:"Tender, nutrient-rich spinach leaves with a mild flavor, grown without synthetic chemicals.",images:"https://www.orgpick.com/cdn/shop/products/spnach_large_01cac1a1-246f-433c-b02b-e2c7986fe95c.jpg"},
+    { name: "Fresh Cherry Tomatoes",description:"Fresh Cherry Tomatoes: Sweet, juicy, and bite-sized tomatoes, perfect for snacking or adding a burst of flavor to dishes.",images:"https://frugivore-bucket.s3.amazonaws.com/media/package/img_one/2020-02-14/Cherry_Tomato_Red_01.jpg"},
+    { name: "Crisp Romaine Lettuce", description:"Crunchy, leafy greens with a slightly bitter taste, ideal for salads and wraps.",images:"https://slyce-product.s3.ap-south-1.amazonaws.com/EXOTIC%20VEGETABLES_null_ROMAINE%20LETTUCE_image_2023-07-10T06%3A29%3A25.475.png" },
+    { name: "Mixed Bell Peppers", description:"Vibrant, sweet peppers in various colors, adding crunch and flavor to salads, stir-fries, and dishes.",images:"https://www.simplyseed.co.uk/user/products/large/Pepper%20Rainbow%20Mixed.jpg" },
+    { name: "Organic Kale", description:"Nutrient-dense, dark green leaves with a robust flavor, perfect for salads, smoothies, and cooking.",images:"https://m.media-amazon.com/images/I/51Ai1lYnQdL._AC_UF894,1000_QL80_.jpg" },
+    { name: "Zucchini", description:"Mild-flavored, versatile squash with tender flesh, great for grilling, sautéing, or adding to baked dishes.",images:"https://www.allthatgrows.in/cdn/shop/articles/Optimized-Feat_image-Zucchini_1_1100x1100.jpg"},
+    { name: "Organic Carrots", description:"Sweet, crunchy root vegetables grown without synthetic chemicals, perfect for snacking or cooking.",images:"https://organicbazar.net/cdn/shop/products/Untitled-design-13-1.jpg"},
+    { name: "Red Radishes", description:" Crisp, spicy root vegetables with a vibrant color, ideal for adding a peppery kick to salads and dishes.",images:"https://specialtyproduce.com/sppics/1241.png"},
   ];
 
   // Helper function to group products into pairs
@@ -142,7 +142,7 @@ export default function SearchResults() {
             />
           </View>
           <TouchableOpacity style={styles.iconButton}>
-            <MapPin size={24} color="#FFFFFF" />
+            {/* <MapPin size={24} color="#FFFFFF" /> */}
           </TouchableOpacity>
         </View>
       </View>
@@ -150,10 +150,10 @@ export default function SearchResults() {
       <FlatList
         ListHeaderComponent={
           <View>
-            <Text style={styles.sectionTitle}>Popular Search</Text>
+            <Text style={styles.sectionTitle}>    Recommendations   </Text>
             <FlatList
               horizontal
-              data={["Organic Tomatoes", "Fresh Spinach", "Bell Peppers", "Broccoli"]}
+              data={[]}
               keyExtractor={(item) => item}
               renderItem={({ item }) => (
                 <TouchableOpacity
@@ -178,29 +178,29 @@ export default function SearchResults() {
             {productPair.map((product) => (
               <View style={styles.productCard} key={product.name}>
                 <Image
-                  source={{ uri: '/placeholder.svg?height=150&width=150' }} // Replace with actual image URL
+                  source={{ uri:styles.productCard }} // Replace with actual image URL
                   style={styles.productImage}
                 />
                 <View style={styles.productInfo}>
                   <Text style={styles.productName}>{product.name}</Text>
-                  <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>
-                    <Text style={styles.productPrice}>${product.price}</Text>
+                  {/* <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>
+                    <Text style={styles.productPrice}>{product.price}</Text>
                     {product.oldPrice && (
                       <Text style={styles.oldPrice}>${product.oldPrice}</Text>
                     )}
-                  </View>
-                  {product.discount && (
+                  </View> */}
+                  {/* {product.discount && (
                     <Text style={styles.badge}>{product.discount}</Text>
-                  )}
-                  <View style={styles.productDetails}>
+                  )} */}
+                  {/* <View style={styles.productDetails}>
                     <Star size={14} color="#FFD700" />
                     <Text style={styles.productDetailText}>
                       {product.rating} · {product.sales} sold
                     </Text>
-                  </View>
+                  </View> */}
                   <View style={styles.productDetails}>
-                    <MapPin size={14} color="#4CAF50" />
-                    <Text style={styles.productDetailText}>{product.location}</Text>
+                    {/* <MapPin size={14} color="#4CAF50" /> */}
+                    <Text style={styles.productDetailText}>{product.description}</Text>
                   </View>
                 </View>
               </View>
@@ -211,3 +211,4 @@ export default function SearchResults() {
     </View>
   );
 }
+
