@@ -16,7 +16,7 @@ export default function Component() {
     <View style={styles.card}>
       <View style={styles.imageContainer}>
         <Image
-          source={{ uri: '/placeholder.svg' }} // Placeholder image
+          source={{ uri: '/placeholder.svg' }}
           style={styles.image}
         />
       </View>
@@ -47,7 +47,7 @@ export default function Component() {
       <FlatList
         data={vegetables}
         keyExtractor={(item, index) => index.toString()}
-        numColumns={2} // Two items per row
+        numColumns={2} 
         contentContainerStyle={styles.list}
         renderItem={renderCard}
       />
